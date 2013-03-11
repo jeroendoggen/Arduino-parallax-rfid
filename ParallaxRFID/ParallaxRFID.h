@@ -36,15 +36,21 @@
 class ParallaxRFID
 {
   public:
+	  ParallaxRFID(_txPin, _rxPin);
+
     int Read();
-    
+	void Write(int AddressTag);
+    void suppressAll();
+
   private:
     int _txPin = 6;
 	int _rxPin = 8;
 	int _RFID_LEGACY = 0x0F;
+	int _RFID_WRITE = 0x02;
 	int _val = 0;
 	char _code[11];
 	int _bytesread = 0;
+	int _whichSpace = 4;
 
 };
 #endif

@@ -15,3 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#include <SoftwareSerial.h>
+#include "Arduino.h"
+#include "ParallaxRFID.h"
+
+SoftwareSerial mySerial(_rxPin, _txPin);
+
+ParallaxRFID::ParallaxRFID( int _txPin,int _rxPin)
+{
+	Serial.begin(9600);
+	mySerial.begin(9600);
+	pinMode(_txPin, OUTPUT);     
+	pinMode(_rxPin, INPUT);
+}

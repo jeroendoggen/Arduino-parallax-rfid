@@ -36,7 +36,7 @@
 class ParallaxRFID
 {
   public:
-	  ParallaxRFID(_txPin, _rxPin);
+	  ParallaxRFID();
 
     int Read();
 	void Write(int AddressTag);

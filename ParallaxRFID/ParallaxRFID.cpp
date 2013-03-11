@@ -21,7 +21,7 @@
 
 SoftwareSerial mySerial(_rxPin, _txPin);
 
-ParallaxRFID::ParallaxRFID( int _txPin,int _rxPin)
+ParallaxRFID::ParallaxRFID()
 {
 	Serial.begin(9600);
 	mySerial.begin(9600);
@@ -35,4 +35,31 @@ void ParallaxRFID::suppressAll()                                //suppresses the
     { mySerial.read();
       suppressAll();
     }
+}
+
+void ParallaxRFID::Read()                              
+{
+	 if(mySerial.available() > 0) {          // if data available from reader 
+
+    if((val = mySerial.read()) == 10) {   // check for header 
+      bytesread = 0; 
+      while(bytesread<10) 
+	  {              // read 10 digit code 
+        if( mySerial.available() > 0) 
+		{ 
+          val = mySerial.read(); 
+          if((val == 10)||(val == 13)) 
+		  { // if header or stop bytes before the 10 digit reading 
+            break;                       // stop reading 
+          } 
+          _code[bytesread] = val;         // add the digit           
+          bytesread++;                   // ready to read next digit  
+        } 
+      } 
+
+      if(bytesread == 10) {              // if 10 digit read is complete 
+        Serial.print("TAG code is: ");   // possibly a good TAG 
+        Serial.println(_code);            // print the TAG code 
+      } 
+      bytesread = 0;
 }

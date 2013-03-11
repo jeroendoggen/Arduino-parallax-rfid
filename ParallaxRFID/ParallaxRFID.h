@@ -39,7 +39,7 @@ class ParallaxRFID
 	  ParallaxRFID();
 
     int Read();
-	void Write(int AddressTag);
+	void Write(_whichSpace);
     void suppressAll();
 
   private:

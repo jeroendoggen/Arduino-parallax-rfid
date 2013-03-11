@@ -33,7 +33,7 @@ void ParallaxRFID::suppressAll()                                //suppresses the
 {
     if(mySerial.available() > 0)
     { mySerial.read();
-      suppressAll();
+      ParallaxRFID::suppressAll();
     }
 }
 
@@ -62,4 +62,17 @@ void ParallaxRFID::Read()
         Serial.println(_code);            // print the TAG code 
       } 
       bytesread = 0;
+}
+
+void ParallaxRFID::Write(_whichSpace)
+{
+	if(mySerial.available() > 0) 
+	{        
+    _val = mySerial.read();
+    if (_val == 1)                                        //If data was written successfully
+      { 
+        ParallaxRFID::suppressAll();
+      }
+    else ParallaxRFID::suppressAll();                                  //If an error occured during writing, discard all data recieved from the RFID writer
+    }
 }

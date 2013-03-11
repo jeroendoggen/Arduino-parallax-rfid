@@ -28,3 +28,11 @@ ParallaxRFID::ParallaxRFID( int _txPin,int _rxPin)
 	pinMode(_txPin, OUTPUT);     
 	pinMode(_rxPin, INPUT);
 }
+
+void ParallaxRFID::suppressAll()                                //suppresses the "null result" from being printed if no RFID tag is present
+{
+    if(mySerial.available() > 0)
+    { mySerial.read();
+      suppressAll();
+    }
+}

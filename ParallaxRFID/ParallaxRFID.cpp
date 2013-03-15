@@ -23,6 +23,18 @@ SoftwareSerial mySerial(_rxPin, _txPin);
 
 ParallaxRFID::ParallaxRFID()
 {
+	_txPin=6;
+	_rxPin=8;
+	_RFID_LEGACY=0x0F;
+	_RFID_WRITE =0x02;
+	_val = 0;
+	_bytesread=0;
+	_whichSpace=4;
+	_first=1;
+	_second=26;
+	_third=3;
+	_fourth=2;
+
 	Serial.begin(9600);
 	mySerial.begin(9600);
 	pinMode(_txPin, OUTPUT);     
@@ -64,8 +76,16 @@ void ParallaxRFID::Read()
       bytesread = 0;
 }
 
-void ParallaxRFID::Write(_whichSpace)
+void ParallaxRFID::Write(_whichSpace,_first,_second,_third,_fourth)
 {
+	mySerial.print("!RW");
+	mySerial.write(byte(RFID_WRITE));
+	mySerial.write(byte(_whichSpace));
+	mySerial.write(byte(_first));
+	mySerial.write(byte(_second));
+	mySerial.write(byte(_third));
+	mySerial.write(byte(_fourth));
+
 	if(mySerial.available() > 0) 
 	{        
     _val = mySerial.read();

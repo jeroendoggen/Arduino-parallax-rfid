@@ -39,18 +39,22 @@ class ParallaxRFID
 	  ParallaxRFID();
 
     int Read();
-	void Write(_whichSpace);
+	void Write(_whichSpace,_first,_second,_third,_fourth);
     void suppressAll();
 
   private:
-    int _txPin = 6;
-	int _rxPin = 8;
-	int _RFID_LEGACY = 0x0F;
-	int _RFID_WRITE = 0x02;
-	int _val = 0;
+    int _txPin;
+	int _rxPin;
+	int _RFID_LEGACY;
+	int _RFID_WRITE;
+	int _val;
 	char _code[11];
-	int _bytesread = 0;
-	int _whichSpace = 4;
+	int _bytesread;
+	int  _whichSpace;
+	int _first;                // first, second, thrid, and fourth are four arbitrary values which will be written to the RFID tag at address whichSpace
+	int _second;
+	int _third;
+	int _fourth;
 
 };
 #endif

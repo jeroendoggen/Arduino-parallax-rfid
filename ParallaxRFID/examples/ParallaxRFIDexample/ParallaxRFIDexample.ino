@@ -1,6 +1,6 @@
 #include <ParallaxRFID.h>
 
-ParallaxRFID RFIDclient();
+ParallaxRFID RFIDclient;
 
 void setup()
 {

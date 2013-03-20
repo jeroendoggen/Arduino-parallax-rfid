@@ -19,7 +19,7 @@
 #include "Arduino.h"
 #include "ParallaxRFID.h"
 
-SoftwareSerial mySerial(_rxPin, _txPin);
+
 
 ParallaxRFID::ParallaxRFID()
 {
@@ -35,6 +35,7 @@ ParallaxRFID::ParallaxRFID()
 	_third=3;
 	_fourth=2;
 
+	SoftwareSerial mySerial(_rxPin, _txPin);
 	Serial.begin(9600);
 	mySerial.begin(9600);
 	pinMode(_txPin, OUTPUT);     

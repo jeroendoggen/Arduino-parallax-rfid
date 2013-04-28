@@ -1,3 +1,4 @@
+#include <SoftwareSerial.h>
 #include <ParallaxRFID.h>
 
 ParallaxRFID RFIDclient;

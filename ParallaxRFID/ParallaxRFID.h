@@ -39,10 +39,11 @@ class ParallaxRFID
 	  ParallaxRFID();
 
     int Read();
-	void Write(_whichSpace,_first,_second,_third,_fourth);
+	void Write(int whichSpace,int first,int second,int third,int fourth);
     void suppressAll();
 
   private:
+	  SoftwareSerial mySerial;
     int _txPin;
 	int _rxPin;
 	int _RFID_LEGACY;

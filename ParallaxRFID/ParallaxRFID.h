@@ -33,32 +33,35 @@
 #endif
 
 #include <SoftwareSerial.h>
+#include "defines.h"
 
 class ParallaxRFID
 {
   public:
     ParallaxRFID(int,int );
 
-    //     int readRFID();
-    // 	void writeRFID(int whichSpace,int first,int second,int third,int fourth);
-    //     void suppressAll();
-    // 	void begin();
+    void begin();
+
+    void suppressAll();
+
+    int readRFID();
+    void writeRFID(int whichSpace,int first,int second,int third,int fourth);
 
   private:
 
     int _txPin;
     int _rxPin;
     SoftwareSerial _mySerial;
-    // 	int _RFID_LEGACY;
-    // 	int _RFID_WRITE;
-    // 	int _val;
-    // 	char _code[11];
-    // 	int _bytesread;
-    // 	int  _whichSpace;
-    // 	int _first;                // first, second, thrid, and fourth are four arbitrary values which will be written to the RFID tag at address whichSpace
-    // 	int _second;
-    // 	int _third;
-    // 	int _fourth;
+    int _RFID_LEGACY;
+    int _RFID_WRITE;
+    int _val;
+    int _bytesread;
 
+    char _code[11];
+    int  _whichSpace;
+    int _first;
+    int _second;
+    int _third;
+    int _fourth;
 };
 #endif

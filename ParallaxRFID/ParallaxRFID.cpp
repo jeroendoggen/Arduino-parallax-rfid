@@ -21,97 +21,96 @@
 
 ParallaxRFID::ParallaxRFID(int in,int out): _mySerial(in, out)
 {
-  _txPin=out;
   _rxPin=in;
-  // 	_RFID_LEGACY=0x0F;
-  // 	_RFID_WRITE =0x02;
-  // 	_val = 0;
-  // 	_bytesread=0;
-
+  _txPin=out;
+  _bytesread=0;
 }
 
-/*
 void ParallaxRFID::begin()
 {
-//     this->compassSerial = new SoftwareSerial(6, 7);
-//     this->compassSerial->begin(9600);
-Serial.begin(9600);
-// 	mySerial.begin(9600);
-pinMode(_rxPin, INPUT);
-pinMode(_txPin, OUTPUT);
-
+  Serial.begin(9600);
+  _mySerial.begin(9600);
+  pinMode(_rxPin, INPUT);
+  pinMode(_txPin, OUTPUT);
+  //   while(true){
+  //   Serial.println(_rxPin);
+  //   delay(100);
+  // //   _mySerial.writeRFID(9600);
+  //   }
 }
 
-void ParallaxRFID::suppressAll()                                //suppresses the "null result" from being printed if no RFID tag is present
+//suppresses the "null result" from being printed if no RFID tag is present
+void ParallaxRFID::suppressAll()
 {
-if(mySerial.available() > 0)
-{ mySerial.read();
-ParallaxRFID::suppressAll();
-}
+  if(_mySerial.available() > 0) {
+    _mySerial.read();
+    ParallaxRFID::suppressAll();
+  }
 }
 
 int ParallaxRFID::readRFID()
 {
-mySerial.print("!RW");
-mySerial.write(byte(_RFID_LEGACY));
+  int val;
+  _mySerial.print("!RW");
+  _mySerial.write(byte(RFID_READ));
+  /// @TODO: why 32?
+  //   _mySerial.write(byte(32));
+  _mySerial.write(byte(32));
 
-if(mySerial.available() > 0)
-{          // if data available from reader
+  if(_mySerial.available() > 0) {
+    val = _mySerial.read();                       //The _mySerial.read() procedure is called, but the result is not printed because I don't want the "error message: 1" cluttering up the serial monitor
+    if (val != 1)                                 //If the error code is anything other than 1, then the RFID tag was not read correctly and any data collected is meaningless. In this case since we don't care about the resultant values they can be suppressed
+      {suppressAll();}
+  }
 
-if((_val = mySerial.read()) == 10)
-{   // check for header
-_bytesread = 0;
-while(_bytesread<10)
-{              // read 10 digit code
-if( mySerial.available() > 0)
-{
-_val = mySerial.read();
-if((_val == 10)||(_val == 13))
-{ // if header or stop bytes before the 10 digit reading
-break;                       // stop reading
-}
-_code[_bytesread] = _val;         // add the digit
-_bytesread++;                   // ready to read next digit
-}
-}
+  if(_mySerial.available() > 0) {
+    val = _mySerial.read();
+    Serial.print("1st:");
+    Serial.println(val, HEX);
+  }
 
-if(_bytesread == 10)
-{              // if 10 digit read is complete
-Serial.print("TAG code is: ");   // possibly a good TAG
-Serial.println(_code);            // print the TAG code
-return _code;
-}
-_bytesread = 0;
-return 0;
-delay(500);
-}
-}
+  if(_mySerial.available() > 0) {
+    val = _mySerial.read();
+    Serial.print("2nd:");
+    Serial.println(val, HEX);
+  }
+
+  if(_mySerial.available() > 0) {
+    val = _mySerial.read();
+    Serial.print("3rd:");
+    Serial.println(val, HEX);
+  }
+
+  if(_mySerial.available() > 0) {
+    val = _mySerial.read();
+    Serial.print("4th:");
+    Serial.println(val, HEX);
+    Serial.println("-----------------");
+  }
 };
 
 void ParallaxRFID::writeRFID(int whichSpace,int first,int second,int third,int fourth)
 {
-_whichSpace=whichSpace;
-_first=first;
-_second=second;
-_third=third;
-_fourth=fourth;
+  _whichSpace=whichSpace;
+  _first=first;
+  _second=second;
+  _third=third;
+  _fourth=fourth;
 
-mySerial.print("!RW");
-mySerial.write(byte(_RFID_WRITE));
-mySerial.write(byte(_whichSpace));
-mySerial.write(byte(_first));
-mySerial.write(byte(_second));
-mySerial.write(byte(_third));
-mySerial.write(byte(_fourth));
+  _mySerial.print("!RW");
+  _mySerial.write(byte(_RFID_WRITE));
+  _mySerial.write(byte(_whichSpace));
+  _mySerial.write(byte(_first));
+  _mySerial.write(byte(_second));
+  _mySerial.write(byte(_third));
+  _mySerial.write(byte(_fourth));
 
-if(mySerial.available() > 0) {
-_val = mySerial.read();
-if (_val == 1)                                        //If data was written successfully
-{ Serial.println("Data written succesfully!");
-suppressAll();
-}
-else suppressAll();                                  //If an error occured during writing, discard all data recieved from the RFID writer
-}
-delay(250);
+  if(_mySerial.available() > 0) {
+    _val = _mySerial.read();
+    if (_val == 1) {                              //If data was written successfully
+      Serial.println("Data written succesfully!");
+      suppressAll();
+    }
+    else suppressAll();                           //If an error occured during writing, discard all data recieved from the RFID writer
+  }
 };
-*/

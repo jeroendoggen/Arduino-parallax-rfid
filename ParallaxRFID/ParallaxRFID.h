@@ -31,33 +31,34 @@
 #include "WProgram.h"
 #include <pins_arduino.h>
 #endif
+
 #include <SoftwareSerial.h>
 
-class ParallaxRFID: public SoftwareSerial
+class ParallaxRFID
 {
   public:
-	  ParallaxRFID(int rxPin,int txPin);
+    ParallaxRFID(int,int );
 
-    int readRFID();
-	void write(int whichSpace,int first,int second,int third,int fourth);
-    void suppressAll();
-	void begin();
+    //     int readRFID();
+    // 	void writeRFID(int whichSpace,int first,int second,int third,int fourth);
+    //     void suppressAll();
+    // 	void begin();
 
   private:
-	  
+
     int _txPin;
-	int _rxPin;
-	SoftwareSerial mySerial;
-	int _RFID_LEGACY;
-	int _RFID_WRITE;
-	int _val;
-	char _code[11];
-	int _bytesread;
-	int  _whichSpace;
-	int _first;                // first, second, thrid, and fourth are four arbitrary values which will be written to the RFID tag at address whichSpace
-	int _second;
-	int _third;
-	int _fourth;
+    int _rxPin;
+    SoftwareSerial _mySerial;
+    // 	int _RFID_LEGACY;
+    // 	int _RFID_WRITE;
+    // 	int _val;
+    // 	char _code[11];
+    // 	int _bytesread;
+    // 	int  _whichSpace;
+    // 	int _first;                // first, second, thrid, and fourth are four arbitrary values which will be written to the RFID tag at address whichSpace
+    // 	int _second;
+    // 	int _third;
+    // 	int _fourth;
 
 };
 #endif

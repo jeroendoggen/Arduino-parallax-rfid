@@ -19,6 +19,11 @@
 #include "Arduino.h"
 #include "ParallaxRFID.h"
 
+
+/// @todo: enable global debug mode to suppress serial logging (using #define RFID_DEBUG)
+/// @todo: add functions to separate debugging code from functional code
+
+/// Constructor
 ParallaxRFID::ParallaxRFID(int in,int out): _mySerial(in, out)
 {
   _rxPin=in;
@@ -26,20 +31,16 @@ ParallaxRFID::ParallaxRFID(int in,int out): _mySerial(in, out)
   _bytesread=0;
 }
 
+/// Initialise two serial ports: HardwareSerial & SoftwareSerial
 void ParallaxRFID::begin()
 {
   Serial.begin(9600);
   _mySerial.begin(9600);
   pinMode(_rxPin, INPUT);
   pinMode(_txPin, OUTPUT);
-  //   while(true){
-  //   Serial.println(_rxPin);
-  //   delay(100);
-  // //   _mySerial.writeRFID(9600);
-  //   }
 }
 
-//suppresses the "null result" from being printed if no RFID tag is present
+/// Suppresses the "null result" from being printed if no RFID tag is present
 void ParallaxRFID::suppressAll()
 {
   if(_mySerial.available() > 0) {
@@ -48,6 +49,7 @@ void ParallaxRFID::suppressAll()
   }
 }
 
+/// Read RFID tag
 int ParallaxRFID::readRFID()
 {
   int val;
@@ -89,6 +91,7 @@ int ParallaxRFID::readRFID()
   }
 };
 
+/// Write data to RFID tag
 void ParallaxRFID::writeRFID(int whichSpace,int first,int second,int third,int fourth)
 {
   _whichSpace=whichSpace;

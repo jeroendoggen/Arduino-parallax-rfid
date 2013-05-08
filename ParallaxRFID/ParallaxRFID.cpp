@@ -21,25 +21,25 @@
 
 
 
-ParallaxRFID::ParallaxRFID(): mySerial(_rxPin, _txPin)
+ParallaxRFID::ParallaxRFID(int rxPin,int txPin)
 {
-	_txPin=6;
-	_rxPin=8;
+	_txPin=txPin;
+	_rxPin=rxPin;
 	_RFID_LEGACY=0x0F;
 	_RFID_WRITE =0x02;
 	_val = 0;
 	_bytesread=0;
-	_whichSpace=4;
-	_first=1;
-	_second=26;
-	_third=3;
-	_fourth=2;
-
 	
+}
+
+void ParallaxRFID::begin()
+{
 	Serial.begin(9600);
 	mySerial.begin(9600);
-	pinMode(_txPin, OUTPUT);     
 	pinMode(_rxPin, INPUT);
+	pinMode(_txPin, OUTPUT);     
+	
+
 }
 
 void ParallaxRFID::suppressAll()                                //suppresses the "null result" from being printed if no RFID tag is present
@@ -50,8 +50,11 @@ void ParallaxRFID::suppressAll()                                //suppresses the
     }
 }
 
-int ParallaxRFID::Read()                              
+int ParallaxRFID::readRFID()                              
 {
+	mySerial.print("!RW");
+	mySerial.write(byte(_RFID_LEGACY));
+
 	 if(mySerial.available() > 0) 
 	 {          // if data available from reader 
 
@@ -68,7 +71,7 @@ int ParallaxRFID::Read()
 								  break;                       // stop reading 
 							} 
 						 _code[_bytesread] = _val;         // add the digit           
-							_bytesread++;                   // ready to read next digit  
+						 _bytesread++;                   // ready to read next digit  
 						} 
 				} 
 
@@ -76,30 +79,39 @@ int ParallaxRFID::Read()
 					{              // if 10 digit read is complete 
 					Serial.print("TAG code is: ");   // possibly a good TAG 
 					Serial.println(_code);            // print the TAG code 
+					return _code;
 					} 
 				_bytesread = 0;
+				return 0;
+				delay(500);
 		}
 	 }
 };
 
-void ParallaxRFID::Write(int whichSpace,int first,int second,int third,int fourth)
+void ParallaxRFID::write(int whichSpace,int first,int second,int third,int fourth)
 {
-	mySerial.print("!RW");
-	mySerial.write(byte(_RFID_WRITE));
-	mySerial.write(byte(whichSpace));
-	mySerial.write(byte(first));
-	mySerial.write(byte(second));
-	mySerial.write(byte(third));
-	mySerial.write(byte(fourth));
+	_whichSpace=whichSpace;
+	_first=first;
+	_second=second;
+	_third=third;
+	_fourth=fourth;
 
-	if(mySerial.available() > 0) 
-	{        
+  mySerial.print("!RW");
+  mySerial.write(byte(_RFID_WRITE));
+  mySerial.write(byte(_whichSpace));
+  mySerial.write(byte(_first));
+  mySerial.write(byte(_second));
+  mySerial.write(byte(_third));
+  mySerial.write(byte(_fourth));
+
+if(mySerial.available() > 0) {        
     _val = mySerial.read();
     if (_val == 1)                                        //If data was written successfully
-      { 
-        ParallaxRFID::suppressAll();
+      { Serial.println("Data written succesfully!");
+        suppressAll();
       }
-    else ParallaxRFID::suppressAll();                                  //If an error occured during writing, discard all data recieved from the RFID writer
+    else suppressAll();                                  //If an error occured during writing, discard all data recieved from the RFID writer
     }
+delay(250);
 };
 

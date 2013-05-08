@@ -33,19 +33,21 @@
 #endif
 #include <SoftwareSerial.h>
 
-class ParallaxRFID
+class ParallaxRFID: public SoftwareSerial
 {
   public:
-	  ParallaxRFID();
+	  ParallaxRFID(int rxPin,int txPin);
 
-    int Read();
-	void Write(int whichSpace,int first,int second,int third,int fourth);
+    int readRFID();
+	void write(int whichSpace,int first,int second,int third,int fourth);
     void suppressAll();
+	void begin();
 
   private:
-	  SoftwareSerial mySerial;
+	  
     int _txPin;
 	int _rxPin;
+	SoftwareSerial mySerial;
 	int _RFID_LEGACY;
 	int _RFID_WRITE;
 	int _val;

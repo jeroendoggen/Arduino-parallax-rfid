@@ -18,58 +18,62 @@
 #include <SoftwareSerial.h>
 #include "Arduino.h"
 #include "ParallaxRFID.h"
+#include "defines.h"
 
 
 /// @todo: enable global debug mode to suppress serial logging (using #define RFID_DEBUG)
 /// @todo: add functions to separate debugging code from functional code
 
-/// Constructor
-ParallaxRFID::ParallaxRFID(int in,int out): _mySerial(in, out)
-{
-  _rxPin=in;
+/// Construct 
+ ParallaxRFID::ParallaxRFID(int in,int out): _mySerial(in, out)
+ {
   _txPin=out;
-  _bytesread=0;
-}
+   _rxPin=in;
 
-/// Initialise two serial ports: HardwareSerial & SoftwareSerial
-void ParallaxRFID::begin()
-{
-  Serial.begin(9600);
-  _mySerial.begin(9600);
-  pinMode(_rxPin, INPUT);
-  pinMode(_txPin, OUTPUT);
-}
 
-/// Suppresses the "null result" from being printed if no RFID tag is present
+	 _bytesread=0;
+	Serial.begin(9600);
+    _mySerial.begin(9600);
+    pinMode(_rxPin, INPUT);
+    pinMode(_txPin, OUTPUT);
+
+ }
+ 
+
+ 
+ 
+
 void ParallaxRFID::suppressAll()
-{
+ {
   if(_mySerial.available() > 0) {
     _mySerial.read();
     ParallaxRFID::suppressAll();
   }
-}
-
-/// Read RFID tag
-int ParallaxRFID::readRFID()
-{
+ }
+ 
+ int ParallaxRFID::readRFID()
+ {
   int val;
   _mySerial.print("!RW");
   _mySerial.write(byte(RFID_READ));
   /// @TODO: why 32?
   //   _mySerial.write(byte(32));
   _mySerial.write(byte(32));
+ 
 
   if(_mySerial.available() > 0) {
     val = _mySerial.read();                       //The _mySerial.read() procedure is called, but the result is not printed because I don't want the "error message: 1" cluttering up the serial monitor
     if (val != 1)                                 //If the error code is anything other than 1, then the RFID tag was not read correctly and any data collected is meaningless. In this case since we don't care about the resultant values they can be suppressed
       {suppressAll();}
   }
+ 
 
   if(_mySerial.available() > 0) {
     val = _mySerial.read();
     Serial.print("1st:");
     Serial.println(val, HEX);
   }
+ 
 
   if(_mySerial.available() > 0) {
     val = _mySerial.read();
@@ -89,11 +93,10 @@ int ParallaxRFID::readRFID()
     Serial.println(val, HEX);
     Serial.println("-----------------");
   }
-};
-
-/// Write data to RFID tag
-void ParallaxRFID::writeRFID(int whichSpace,int first,int second,int third,int fourth)
-{
+ };
+ 
+ void ParallaxRFID::writeRFID(int whichSpace,int first,int second,int third,int fourth)
+ {
   _whichSpace=whichSpace;
   _first=first;
   _second=second;
@@ -107,13 +110,14 @@ void ParallaxRFID::writeRFID(int whichSpace,int first,int second,int third,int f
   _mySerial.write(byte(_second));
   _mySerial.write(byte(_third));
   _mySerial.write(byte(_fourth));
+ 
 
   if(_mySerial.available() > 0) {
     _val = _mySerial.read();
-    if (_val == 1) {                              //If data was written successfully
+   if (_val == 1) {                              //If data was written successfully
       Serial.println("Data written succesfully!");
       suppressAll();
     }
     else suppressAll();                           //If an error occured during writing, discard all data recieved from the RFID writer
   }
-};
+ };

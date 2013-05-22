@@ -27,19 +27,21 @@
 /// Construct 
  ParallaxRFID::ParallaxRFID(int in,int out): _mySerial(in, out)
  {
-  _txPin=out;
-   _rxPin=in;
-
-
-	 _bytesread=0;
+	 _txPin=out;
+	 _rxPin=in;
+	 begin();
+ }
+ 
+ 
+void ParallaxRFID::begin()
+{
+	_bytesread=0;
 	Serial.begin(9600);
     _mySerial.begin(9600);
     pinMode(_rxPin, INPUT);
     pinMode(_txPin, OUTPUT);
-
- }
- 
-
+	Serial.print("begonnen");
+}
  
  
 
@@ -51,57 +53,72 @@ void ParallaxRFID::suppressAll()
   }
  }
  
- int ParallaxRFID::readRFID()
+ int ParallaxRFID::readRFID(int adress)
  {
-  int val;
+  
   _mySerial.print("!RW");
   _mySerial.write(byte(RFID_READ));
-  /// @TODO: why 32?
-  //   _mySerial.write(byte(32));
-  _mySerial.write(byte(32));
+  _mySerial.write(byte(adress));
  
+  int one;
+  int two;
+  int three;
+  int four;
 
   if(_mySerial.available() > 0) {
-    val = _mySerial.read();                       //The _mySerial.read() procedure is called, but the result is not printed because I don't want the "error message: 1" cluttering up the serial monitor
-    if (val != 1)                                 //If the error code is anything other than 1, then the RFID tag was not read correctly and any data collected is meaningless. In this case since we don't care about the resultant values they can be suppressed
+    _val = _mySerial.read();                       //The _mySerial.read() procedure is called, but the result is not printed because I don't want the "error message: 1" cluttering up the serial monitor
+    if (_val != 1)                                 //If the error code is anything other than 1, then the RFID tag was not read correctly and any data collected is meaningless. In this case since we don't care about the resultant values they can be suppressed
       {suppressAll();}
   }
  
 
   if(_mySerial.available() > 0) {
-    val = _mySerial.read();
-    Serial.print("1st:");
-    Serial.println(val, HEX);
+    _val = _mySerial.read();
+	one=_val;
+	delay(250);
   }
  
 
   if(_mySerial.available() > 0) {
-    val = _mySerial.read();
-    Serial.print("2nd:");
-    Serial.println(val, HEX);
+    _val = _mySerial.read();
+   two=_val;
+	delay(250);
   }
 
   if(_mySerial.available() > 0) {
-    val = _mySerial.read();
-    Serial.print("3rd:");
-    Serial.println(val, HEX);
+    _val = _mySerial.read();
+	three=_val;
+	delay(250);
   }
 
   if(_mySerial.available() > 0) {
-    val = _mySerial.read();
-    Serial.print("4th:");
-    Serial.println(val, HEX);
-    Serial.println("-----------------");
+    _val = _mySerial.read();
+	four=_val;
+	delay(250);
   }
+  if(one==two&&two==three&&three==four)//all off the tags will have a code like 5,5,5,5 or 6,6,6,6 or ....
+	  //if tag read correct/ send the number of tag, else return false
+  {
+	  return one;
+  }
+  else
+  {
+	  return 0;
+  }
+  
  };
  
  void ParallaxRFID::writeRFID(int whichSpace,int first,int second,int third,int fourth)
  {
+	 Serial.print("in schrijf functie");
+	_RFID_WRITE=0x02;
   _whichSpace=whichSpace;
   _first=first;
   _second=second;
   _third=third;
   _fourth=fourth;
+
+   int val;
 
   _mySerial.print("!RW");
   _mySerial.write(byte(_RFID_WRITE));
@@ -110,14 +127,14 @@ void ParallaxRFID::suppressAll()
   _mySerial.write(byte(_second));
   _mySerial.write(byte(_third));
   _mySerial.write(byte(_fourth));
- 
 
-  if(_mySerial.available() > 0) {
-    _val = _mySerial.read();
-   if (_val == 1) {                              //If data was written successfully
-      Serial.println("Data written succesfully!");
-      suppressAll();
+if(_mySerial.available() > 0) {        
+    val = _mySerial.read();
+    if (val == 1)                                        //If data was written successfully
+      { Serial.println("Data written succesfully!");
+        suppressAll();
+      }
+    else suppressAll();                                  //If an error occured during writing, discard all data recieved from the RFID writer
     }
-    else suppressAll();                           //If an error occured during writing, discard all data recieved from the RFID writer
-  }
+delay(250);
  };
